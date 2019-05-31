@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <title>Panther Fuel Calculator</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+	<!link rel="stylesheet" href="css/bootstrap-responsive.css">
+  </head>
+  <body>
+    <h1>Panther ODM Calculator</h1>
+    <img src="img/panther_icon.PNG">
+    <p>
+    <label class="description">Details about the Panther ODM can be found in <a href="https://docs.google.com/document/d/19Q2Is2WLFLqcv1QyXeFMVQJVWOWU0oc77TKL8y6G-bE/edit?usp=sharing">this document</a></label>
+
+      
+    <p>
+   
+    <form id="equipmentForm" class="form-horizontal"  method="post" action="">
+
+      <h3><font color="red"  ><i><label id="initErrorMsg"></label></i></font></h3>
+      <h2>Equipment</h2>
+
+        
+      <div class="row">
+
+        <div class="col-sm-2">
+          <label class="description" >Initial fuel</label>
+        </div>
+        <div class="col-sm-2">
+          <input id="initialFuel" name="initialFuel" class="element text medium" type="text" maxlength="10"  value=""/> 
+        </div>
+        <div class="col-sm-1">
+            <label class="description" >kg</label>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-2">
+          <label class="description" id="missileList" for="numMissiles">Number of missiles</label>	
+        </div>
+        <div class="col-sm-2">
+          <select class="element select medium" id="numMissiles" name="numMissiles"> 
+            <option value="0" >0</option>
+            <option value="1" >1</option>
+            <option value="2" >2</option>
+            <option value="3" >3</option>
+            <option value="4" >4</option>
+            <option value="5" >5</option>
+            <option value="6" >6</option>
+            <!--Faulty by design-->
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-2">
+          <label class="description" for="numDumbBomb" >Number of dumb bombs</label>	
+        </div>
+        <div class="col-sm-2">
+            <select class="element select medium" id="numDumbBomb" name="numDumbBomb" onchange="dumbBomb(this.preset)"> 
+                <option value="0" >0</option>
+                <option value="1" >1</option>
+                <option value="2" >2</option>
+                <option value="3" >3</option>
+                <option value="4" >4</option>
+                <option value="5" >5</option>
+                <option value="6" >6</option>
+                <!--Faulty by design-->
+                <option value="7" >7</option>
+                <option value="8" >8</option>
+            </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-2">
+            <label class="description" for="reconPodLabel">Recon pod </label>
+        </div>
+        <div class="col-sm-2">
+          <span onchange="reconPod()" >
+            <input id="reconPod" name="reconPod" class="element checkbox" type="checkbox" value="1" />
+          </span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-2">
+            <label class="description" for="intelliBombLabel" >Intelli bomb </label>
+        </div>
+        <div class="col-sm-2">
+          <span onchange="intelliBomb()">
+            <input id="intelliBomb" name="intelliBomb" class="element checkbox" type="checkbox" value="1" />
+          </span>
+        </div>
+      </div>
+  
+      <div class="row">
+          <div class="col-sm-2">
+            <label class="description" for="fuelTankLabel">External fuel tanks </label>
+          </div>
+          <div class="col-sm-2">
+            <input id="fuelTank" name="fuelTank" class="element checkbox" type="checkbox" value="1" />
+        </div>
+      </div>
+
+      <input type="button" class="btn btn-primary" id="setEquipmentButton" value="Load" onClick="initEquipment()">
+    </form>
+    
+    <form id="statusForm" class="appnitro"  method="post" action="" hidden>
+      <h3><font color="red"><i><label id="statusErrorMsg" /></i></font></h3>
+      <h2>Status</h2>
+
+      <div class="row">
+
+        <div class="col-sm-2">
+          <label>Aircraft leg</label>
+        </div>
+        <div class="col-sm-2">
+          <input id="aircraftLeg" name="aircraftLeg" class="element text medium " type="text" maxlength="10" value="0" readonly  />
+        </div>
+
+      </div>
+
+      <div class="row">
+
+        <div class="col-sm-2">
+          <label>Aircraft altitude</label>
+        </div>
+        <div class="col-sm-2">
+          <input id="aircraftHeight" name="aircraftHeight" class="element text medium " type="text" maxlength="10" value="0" readonly  />
+        </div>
+        <div class="col-sm-1">
+          <label class="description" >ft</label>
+        </div>
+      </div>
+
+      <div class="row">
+
+        <div class="col-sm-2">
+          <label>All up weight</label>
+        </div>
+        <div class="col-sm-2">
+          <input id="aircraftWeight" name="aircraftWeight" class="element text medium" type="text" maxlength="10" value="0" readonly  />
+        </div>
+        <div class="col-sm-1">
+          <label class="description" >kg</label>
+        </div>
+      </div>
+      
+      <div class="row">
+
+        <div class="col-sm-2">
+          <label>Remaining fuel</label>
+        </div>
+        <div class="col-sm-2">
+          <input id="aircraftFuelRemaining" name="aircraftFuelRemaining" class="element text medium" type="text" maxlength="10" value="0" readonly  />
+        </div>
+        <div class="col-sm-1">
+          <label class="description" >kg</label>
+        </div>
+      </div>      
+
+      <div class="row">
+
+        <div class="col-sm-2">
+            <label>Fuel used last leg</label>
+        </div>
+        <div class="col-sm-2">
+            <input id="aircraftFuelLastLeg" name="aircraftFuel" class="element text medium" type="text" maxlength="10" value="" readonly  />
+        </div>
+        <div class="col-sm-1">
+          <label class="description" >kg</label>
+        </div>
+      </div>        
+      
+      <div class="row">
+
+          <div class="col-sm-2">
+            <label class="description" for="moveType" >Perform a ...</label>	
+          </div>
+          <div class="col-sm-2">
+            <select class="element select medium" id="moveType" name="moveType" onchange="moveTypeSelection(this.preset)"> 
+                <option value="0" ></option>
+                <option value="1" >Cruise</option>
+                <option value="2" >Climb</option>
+                <option value="3" >Dive</option>
+                <option value="4" disabled >Drop bomb(coming soon)</option>
+                <option value="5" disabled >Refuel(coming soon)</option>
+            </select>
+          </div>
+        </div> 
+      
+    </form>
+		
+	<form id="loadingForm" class="form-horizontal"  method="post" action="" hidden>
+		<div class="row">
+			<div class="col-sm-5"><h2>Loading aircraft ...</h2></div>        
+		</div>
+		<p>
+
+		<div class="row" id="waitGraphic" >
+			<div class="col-sm-5" id="loadEquipment">
+				<img src="img/waiting.gif">
+			</div>
+		</div>
+	</form>
+    
+    <form id="cruiseForm" class="appnitro"  method="post" action="" hidden>
+      <h2>Cruise</h2>
+
+      <div class="row">
+
+        <div class="col-sm-2">
+          <label>Speed</label>
+        </div>
+        <div class="col-sm-2">
+          <input id="aircraftSpeed" name="aircraftSpeed" class="element text medium" type="text" maxlength="10" value="500" />
+        </div>
+        <div class="col-sm-1">
+          <label class="description" >kts</label>
+        </div>
+      </div>  
+
+      <div class="row">
+
+        <div class="col-sm-2">
+          <label>Distance</label>
+        </div>
+        <div class="col-sm-2">
+            <input id="aircraftDistance" name="aircraftDistance" class="element text medium" type="text" maxlength="10"  />
+        </div>
+        <div class="col-sm-1">
+          <label class="description" >nm</label>
+        </div>
+      </div>  
+      
+      <input type="button" class="btn btn-primary" id="applyCruiseButton" value="Apply" onClick="applyCruise()"> 
+      
+    </form>
+    
+    <form id="climbForm" class="appnitro"  method="post" action="" hidden>
+      <h2>Climb</h2>
+
+      <div class="row">
+
+        <div class="col-sm-2">
+          <label>Climb altitude</label>
+        </div>
+        <div class="col-sm-2">
+            <input id="climbAltitude"  name="climbAltitude" class="element text medium" type="text" maxlength="10" value="" />
+        </div>
+        <div class="col-sm-1">
+          <label class="description" >ft</label>
+        </div>
+      </div>  
+            
+      <input type="button" class="btn btn-primary" id="applyClimbButton" value="Apply" onClick="aircraftClimb(true)">
+     
+    </form>
+    
+    <form id="diveForm" class="appnitro"  method="post" action="" hidden>
+      <h2>Dive</h2>
+      <div class="row">
+        <div class="col-sm-2">
+          <label>Dive altitude</label>
+        </div>
+        <div class="col-sm-2">
+            <input id="diveAltitude" name="diveAltitude" class="element text medium" type="text" maxlength="10" value="" />
+        </div>
+        <div class="col-sm-1">
+          <label class="description" >ft</label>
+        </div>
+      </div>  
+
+      
+      <input type="button" class="btn btn-primary" id="applyDiveButton" value="Apply" onClick="aircraftClimb(false)"> 
+    </form>
+
+    <p></p>
+    <input type="button" class="btn btn-secondary" id="restartButton" value="Restart" onClick="window.location.reload(false)">
+    
+     
+
+    <script>
+    
+   
+    
+    
+    
+    function restart () {
+      google.script.run.doGet();
+    }
+    
+    // Utility functions
+    var errorMsg = "";
+    
+    function updateStatus() { 
+      console.log("updateStatus");
+      document.getElementById('aircraftLeg').value = aircraftManagement.acLeg;
+      document.getElementById('aircraftHeight').value = aircraftManagement.acAltitude;
+      document.getElementById('aircraftWeight').value = aircraftManagement.acAllUpWeight;
+      document.getElementById('aircraftFuelRemaining').value = aircraftManagement.acFuelRemaining;
+      document.getElementById('aircraftFuelLastLeg').value = aircraftManagement.fuelUsedLastManoeuvre;
+      
+      setStatusError();
+      document.getElementById('moveType').value = 0;
+      moveTypeSelection();
+      
+    }
+    
+    function setStatusError() {
+      console.log("setStatusError");
+      document.getElementById('statusErrorMsg').innerHTML = errorMsg;
+    }
+       
+    // Equipment load functions
+      
+    function equipmentLocked (lockSetting) {
+      document.getElementById('initialFuel').readOnly  = lockSetting;
+      document.getElementById('initialFuel').disabled  = lockSetting;
+      document.getElementById('numMissiles').disabled  = lockSetting;
+      document.getElementById('numDumbBomb').disabled  = lockSetting;
+      document.getElementById('reconPod').disabled  = lockSetting;
+      document.getElementById('intelliBomb').disabled  = lockSetting;
+      document.getElementById('fuelTank').disabled  = lockSetting;
+      document.getElementById('setEquipmentButton').disabled  = lockSetting;
+      
+      if (lockSetting == true) {
+        document.getElementById('equipmentForm').style.fontStyle = "italic";
+      } else {
+        document.getElementById('equipmentForm').style.fontStyle = "normal";
+      }
+            
+    }
+    
+    function dumbBomb(numBomb) {
+      console.log("dumbBomb");
+      document.getElementById('reconPod').checked  = false;
+      document.getElementById('intelliBomb').checked = false;
+    }
+    
+    function reconPod() {
+      console.log("reconPod");
+      document.getElementById('numDumbBomb').selectedIndex  = 0;
+      document.getElementById('intelliBomb').checked = false;
+    }
+    
+    function intelliBomb() {
+      console.log("intelliBomb");
+      document.getElementById('numDumbBomb').selectedIndex  = 0;
+      document.getElementById('reconPod').checked = false;
+    }
+    
+
+   
+    function initEquipment() {
+      console.log("initEquipment");
+      equipmentLocked(true);
+      setupFuelData();
+      var fuelWeight = document.getElementById('initialFuel').value;
+      var numMissile = document.getElementById('numMissiles').selectedIndex;
+      var numDumbBomb = document.getElementById('numDumbBomb').selectedIndex;
+      var numReconPod = document.getElementById('reconPod').checked ? 1 : 0;
+      var numIntelliBomb = document.getElementById('intelliBomb').checked ? 1 : 0;
+      var numFuelTank = document.getElementById('fuelTank').checked ? 1 : 0;
+      
+      
+      if (initAircraftEquip( fuelWeight, numMissile, numDumbBomb, numReconPod, numIntelliBomb, numFuelTank ) ) {
+        document.getElementById('initErrorMsg').innerHTML = "";
+        errorMsg = "";
+        updateStatus();
+        
+        document.getElementById('equipmentForm').hidden = true;
+        document.getElementById('loadingForm').hidden = false;
+
+        var randomTimeout = parseInt(Math.random() * 1000);
+        setTimeout(function() {
+          document.getElementById('statusForm').hidden = false;
+          document.getElementById('loadingForm').hidden = true;
+        }, randomTimeout);
+        
+      } else {
+        document.getElementById('initErrorMsg').innerHTML = errorMsg;
+        equipmentLocked(false);
+      }
+   
+    }
+    
+    // Cruise
+    function applyCruise() {
+      console.log("applyCruise");
+      var speed = document.getElementById('aircraftSpeed').value;
+      var distance = document.getElementById('aircraftDistance').value;
+      
+      if(isNaN(speed)) {
+        errorMsg = "Set speed is not a number";
+        setStatusError();
+        return;
+      }
+      
+      if(isNaN(distance)) {
+        errorMsg = "Set distance is not a number";
+        setStatusError();
+        return;
+      }
+      
+      var fuelRate = fuelRateData.match( aircraftManagement.acAltitude, speed, aircraftManagement.acAllUpWeight );
+      var fuelNeeded = +fuelRate * +distance * 60.0 / (1.0 * +speed);
+      console.log("Fuel rate: " + fuelRate);  
+      
+      if(fuelNeeded > aircraftManagement.acFuelRemaining) {
+        errorMsg = "Insufficient fuel for manoeuvre";
+        setStatusError();
+        return;
+      }
+      
+      //Set new values
+      aircraftManagement.acLeg++;
+      aircraftManagement.acFuelRemaining -= fuelNeeded;
+      aircraftManagement.fuelUsedLastManoeuvre = fuelNeeded;
+      aircraftManagement.allUpWeight();
+      errorMsg = "";
+      
+      updateStatus();
+    
+    }
+
+    
+    // Climb and dive
+    function aircraftClimb (acClimb) {
+      var newAlt;
+      if (acClimb) {
+        newAlt = document.getElementById('climbAltitude').value;
+      } else {
+        newAlt = document.getElementById('diveAltitude').value;
+      }
+      
+      if(isNaN(newAlt)) {
+        errorMsg = "New set altitude is not a number";
+        setStatusError();
+        return;
+      }
+      
+      var fuelNeeded;
+      
+      if (acClimb) { 
+        fuelNeeded = (+newAlt - +aircraftManagement.acAltitude) /100.0;
+      } else {
+        fuelNeeded = 0;
+      }
+      
+      if(fuelNeeded > aircraftManagement.acFuelRemaining) {
+        errorMsg = "Insufficient fuel for manoeuvre";
+        setStatusError();
+        return;
+      }
+      
+      //Set new values
+      aircraftManagement.acLeg++;
+      aircraftManagement.acAltitude = newAlt;
+      aircraftManagement.acFuelRemaining -= fuelNeeded;
+      aircraftManagement.fuelUsedLastManoeuvre = fuelNeeded;
+      aircraftManagement.allUpWeight();
+      errorMsg = "";
+      
+      updateStatus();
+    }
+    
+    // Move functions
+    
+    function moveTypeSelection(moveNum) {
+      
+      var selection = document.getElementById('moveType').value;
+      
+      console.log("moveType selection num:" + selection);
+      
+      document.getElementById('cruiseForm').hidden = true;
+      document.getElementById('climbForm').hidden = true;
+      document.getElementById('diveForm').hidden = true;
+     
+      switch (+selection) {
+        case 0:
+          break;
+        case 1:
+          document.getElementById('cruiseForm').hidden = false;
+          break;
+        case 2:
+          document.getElementById('climbForm').hidden = false;
+          break;
+        case 3:
+          document.getElementById('diveForm').hidden = false;
+          break;
+        default:
+      }
+    }
+    
+    // Data handling functions
+    var fuelData = [];
+
+
+function roundedHeight (inputHgt) {
+  var retHeight = 32000;
+  
+  if (+inputHgt < 500.0) {
+      retHeight = 100;
+  } else if (+inputHgt< 2000.0) {
+      retHeight = 500;
+  } else if (+inputHgt < 8000.0) {
+      retHeight = 2000;
+  } else if (+inputHgt < 16000.0) {
+      retHeight = 8000;
+  } else if (+inputHgt < 32000.0) {
+      retHeight = 16000;
+  }
+  
+  return retHeight;
+}
+
+function roundedWeight(inputWgt) {
+  var retWeight = 7000;
+
+  if (+inputWgt > 15000.0) {
+    retWeight = 16000;
+  } else if (+inputWgt > 14000.0) {
+    retWeight = 15000;
+  } else if (+inputWgt > 13000.0) {
+    retWeight = 14000;
+  } else if (+inputWgt > 12000.0) {
+    retWeight = 13000;
+  } else if (+inputWgt > 11000.0) {
+    retWeight = 12000;
+  } else if (+inputWgt > 10000.0) {
+    retWeight = 11000;
+  } else if (+inputWgt > 9000.0) {
+    retWeight = 10000;
+  } else if (+inputWgt > 8000.0) {
+    retWeight = 9000;
+  } else if (+inputWgt > 7000.0) {
+    retWeight = 8000;
+  } else if (+inputWgt >= 6000.0) {
+    retWeight = 7000;
+  }
+
+  return retWeight;
+}
+
+function roundedSpeed(inputSpd) {
+  var retSpeed = 400;
+  
+  if (+inputSpd > 500) {
+    retSpeed = 600;
+  } else if (+inputSpd > 400) {
+    retSpeed = 500;
+  }
+  
+  return retSpeed;
+}
+
+
+
+var fuelRateData = {
+  itemSize: 0,
+  altitude: 0,
+  weight: 0 ,
+  speed: 0 ,
+  fuelUsage: 0,
+
+  match: function(tgtAltitude, tgtSpeed, tgtWeight) {
+    var returnVal = 99.9;
+    var notMatched = 1;
+    
+    //Data uses rounded values
+    var rndHeight = roundedHeight(tgtAltitude);
+    var rndSpeed = roundedSpeed(tgtSpeed);
+    var rndWeight = roundedWeight(tgtWeight);
+    console.log("Rounded ht:" + rndHeight + " spd:" + rndSpeed + " wgt:" + rndWeight);
+    
+    for(var i = 0; i < fuelRateData.itemSize && notMatched == 1 ; i++) {
+      //console.log("Data ht:" + this.altitude[i] + " spd:" + this.speed[i] + " wgt:" + this.weight[i]);
+      if (this.altitude[i] == rndHeight && 
+        this.weight[i] == rndWeight &&
+        this.speed[i] == rndSpeed ) {
+        returnVal = this.fuelUsage[i];
+        notMatched = 0;
+      }
+    }
+    
+    return returnVal;
+  },
+  add: function (dataAlt, dataSpd, dataWgt, dataFuel) {
+    if ( this.itemSize == 0 ) {
+      // Initialise
+      this.altitude = [];
+      this.weight = [];
+      this.speed = [];
+      this.fuelUsage = [];
+    } 
+    
+    this.altitude.push(dataAlt);
+    this.weight.push(dataWgt);
+    this.speed.push(dataSpd);
+    this.fuelUsage.push(dataFuel);
+    this.itemSize = this.itemSize + 1;
+  }
+};
+
+
+
+
+var aircraftManagement = {
+  acAllUpWeight: 0,
+  acBaseWeight: 6000,
+  
+  acAltitude: 0,
+  acLeg: 0,
+
+  acMaxFuel: 3000,
+  acMaxFuelNoTanks: 3000,
+  acFuelRemaining: 0,
+  fuelUsedLastManoeuvre: 0,
+  
+  missileWeight: 150,
+  numMissile: 0,
+  maxMissile: 8,
+  dumbBombWeight: 600,
+  numDumbBomb: 0,
+  maxDumbBomb: 6,
+  reconPodWeight: 800,
+  numReconPod: 0,
+  maxReconPod: 1,
+  intelliBombWeight: 2000,
+  numIntelliBomb: 0,
+  maxIntelliBomb: 1,
+  
+  fuelTankWeight: 200,
+  numFuelTank: 0,
+  addedFuelCapacity: 3000,
+  maxFuelTank: 1,
+  
+  allUpWeight: function() {
+    this.acAllUpWeight = +this.acBaseWeight 
+      + +this.acFuelRemaining
+      + ( this.missileWeight *  this.numMissile )
+      + ( this.dumbBombWeight * this.numDumbBomb )
+      + ( this.reconPodWeight * this.numReconPod )
+      + ( this.intelliBombWeight * this.numIntelliBomb )
+      + ( this.fuelTankWeight * this.numFuelTank );
+    
+    this.acMaxFuel = this.acMaxFuelNoTanks + (this.addedFuelCapacity * this.numFuelTank);
+  },
+  
+  recalculateMaxFuel: function() {
+    this.acMaxFuel = +this.acMaxFuelNoTanks + (+this.numFuelTank * +this.addedFuelCapacity);
+  }
+  
+}  
+
+function getData() {
+  
+  setupFuelData();
+  var retData = [];
+  for(var i = 0; i < fuelRateData.itemSize ; i++) {
+    retData.push(fuelRateData.altitude[i] + ' ' + fuelRateData.fuelUsage[i]);
+  }
+  return retData;
+}  
+
+function checkFuel(fuelLevel) {
+  
+  //minFuel = 0;
+  //maxFuel = 7000;
+  
+  if (fuelLevel > minFuel && fuelLevel <= maxFuel) {
+    return fuelLevel;
+  } /*else {
+    throw "Not valid fuel level";
+  }*/
+  return fuelLevel;
+}
+
+function initAircraftEquip(fuelWeight, numMissile, numDumbBomb, numReconPod, numIntelliBomb, numFuelTank ) {
+  
+  if (numFuelTank <= aircraftManagement.maxFuelTank) {
+    aircraftManagement.numFuelTank = numFuelTank;
+    aircraftManagement.recalculateMaxFuel();
+  } else {
+    errorMsg = "Only one fuel tank can be fitted";
+    return false;
+  }
+  
+  
+  if (fuelWeight > 0 && fuelWeight <= aircraftManagement.acMaxFuel) {
+    aircraftManagement.acFuelRemaining = fuelWeight;
+  } else {
+    errorMsg = "Max fuel level of " + aircraftManagement.acMaxFuel + "kg"; 
+    return false;
+  }
+  
+  aircraftManagement.numMissile = numMissile;
+  aircraftManagement.numDumbBomb = numDumbBomb;
+  aircraftManagement.numReconPod = numReconPod;
+  aircraftManagement.numIntelliBomb = numIntelliBomb;
+  aircraftManagement.numFuelTank = numFuelTank;
+  aircraftManagement.allUpWeight();
+
+  return true;
+
+}
+
+
+// Set data
+function setupFuelData() {
+    console.log("setupFuelData");
+
+        // 400kt table
+        fuelRateData.add(100.0, 400.0, 7000.0, 26.2);
+        fuelRateData.add(500.0, 400.0, 7000.0, 23.8);
+        fuelRateData.add(2000.0, 400.0, 7000.0, 21.8);
+        fuelRateData.add(8000.0, 400.0, 7000.0, 16.5);
+        fuelRateData.add(16000.0, 400.0, 7000.0, 12.3);
+        fuelRateData.add(32000.0, 400.0, 7000.0, 6.8);
+        fuelRateData.add(100.0, 400.0, 8000.0, 27.1);
+        fuelRateData.add(500.0, 400.0, 8000.0, 24.7);
+        fuelRateData.add(2000.0, 400.0, 8000.0, 22.6);
+        fuelRateData.add(8000.0, 400.0, 8000.0, 17.1);
+        fuelRateData.add(16000.0, 400.0, 8000.0, 12.7);
+        fuelRateData.add(32000.0, 400.0, 8000.0, 7);
+        fuelRateData.add(100.0, 400.0, 9000.0, 28.1);
+        fuelRateData.add(500.0, 400.0, 9000.0, 25.5);
+        fuelRateData.add(2000.0, 400.0, 9000.0, 23.4);
+        fuelRateData.add(8000.0, 400.0, 9000.0, 17.7);
+        fuelRateData.add(16000.0, 400.0, 9000.0, 13.2);
+        fuelRateData.add(32000.0, 400.0, 9000.0, 7.3);
+        fuelRateData.add(100.0, 400.0, 10000.0, 29);
+        fuelRateData.add(500.0, 400.0, 10000.0, 26.4);
+        fuelRateData.add(2000.0, 400.0, 10000.0, 24.2);
+        fuelRateData.add(8000.0, 400.0, 10000.0, 18.3);
+        fuelRateData.add(16000.0, 400.0, 10000.0, 13.6);
+        fuelRateData.add(32000.0, 400.0, 10000.0, 7.6);
+        fuelRateData.add(100.0, 400.0, 11000.0, 30.1);
+        fuelRateData.add(500.0, 400.0, 11000.0, 27.4);
+        fuelRateData.add(2000.0, 400.0, 11000.0, 25.1);
+        fuelRateData.add(8000.0, 400.0, 11000.0, 18.9);
+        fuelRateData.add(16000.0, 400.0, 11000.0, 14.1);
+        fuelRateData.add(32000.0, 400.0, 11000.0, 7.8);
+        fuelRateData.add(100.0, 400.0, 12000.0, 31.1);
+        fuelRateData.add(500.0, 400.0, 12000.0, 28.3);
+        fuelRateData.add(2000.0, 400.0, 12000.0, 25.9);
+        fuelRateData.add(8000.0, 400.0, 12000.0, 19.6);
+        fuelRateData.add(16000.0, 400.0, 12000.0, 14.6);
+        fuelRateData.add(32000.0, 400.0, 12000.0, 8.1);
+        fuelRateData.add(100.0, 400.0, 13000.0, 32.2);
+        fuelRateData.add(500.0, 400.0, 13000.0, 29.3);
+        fuelRateData.add(2000.0, 400.0, 13000.0, 26.8);
+        fuelRateData.add(8000.0, 400.0, 13000.0, 20.3);
+        fuelRateData.add(16000.0, 400.0, 13000.0, 15.1);
+        fuelRateData.add(32000.0, 400.0, 13000.0, 8.4);
+        fuelRateData.add(100.0, 400.0, 14000.0, 33.4);
+        fuelRateData.add(500.0, 400.0, 14000.0, 30.3);
+        fuelRateData.add(2000.0, 400.0, 14000.0, 27.8);
+        fuelRateData.add(8000.0, 400.0, 14000.0, 21);
+        fuelRateData.add(16000.0, 400.0, 14000.0, 15.7);
+        fuelRateData.add(32000.0, 400.0, 14000.0, 8.7);
+        fuelRateData.add(100.0, 400.0, 15000.0, 34.5);
+        fuelRateData.add(500.0, 400.0, 15000.0, 31.4);
+        fuelRateData.add(2000.0, 400.0, 15000.0, 28.8);
+        fuelRateData.add(8000.0, 400.0, 15000.0, 21.8);
+        fuelRateData.add(16000.0, 400.0, 15000.0, 16.2);
+        fuelRateData.add(32000.0, 400.0, 15000.0, 19);
+        fuelRateData.add(100.0, 400.0, 16000.0, 35.7);
+        fuelRateData.add(500.0, 400.0, 16000.0, 32.5);
+        fuelRateData.add(2000.0, 400.0, 16000.0, 29.8);
+        fuelRateData.add(8000.0, 400.0, 16000.0, 22.5);
+        fuelRateData.add(16000.0, 400.0, 16000.0, 16.8);
+        fuelRateData.add(32000.0, 400.0, 16000.0, 9.3);
+
+        // 500kt table
+        fuelRateData.add(100.0, 500.0, 7000.0, 36.8);
+        fuelRateData.add(100.0, 500.0, 8000.0, 38.1);
+        fuelRateData.add(100.0, 500.0, 9000.0, 39.5);
+        fuelRateData.add(100.0, 500.0, 10000.0, 40.9);
+        fuelRateData.add(100.0, 500.0, 11000.0, 42.3);
+        fuelRateData.add(100.0, 500.0, 12000.0, 43.8);
+        fuelRateData.add(100.0, 500.0, 13000.0, 45.3);
+        fuelRateData.add(100.0, 500.0, 14000.0, 46.9);
+        fuelRateData.add(100.0, 500.0, 15000.0, 48.6);
+        fuelRateData.add(100.0, 500.0, 16000.0, 50.3);
+        fuelRateData.add(500.0, 500.0, 7000.0, 33.5);
+        fuelRateData.add(500.0, 500.0, 8000.0, 34.7);
+        fuelRateData.add(500.0, 500.0, 9000.0, 35.9);
+        fuelRateData.add(500.0, 500.0, 10000.0, 37.2);
+        fuelRateData.add(500.0, 500.0, 11000.0, 38.5);
+        fuelRateData.add(500.0, 500.0, 12000.0, 39.9);
+        fuelRateData.add(500.0, 500.0, 13000.0, 41.3);
+        fuelRateData.add(500.0, 500.0, 14000.0, 42.7);
+        fuelRateData.add(500.0, 500.0, 15000.0, 44.2);
+        fuelRateData.add(500.0, 500.0, 16000.0, 45.8);
+        fuelRateData.add(2000.0, 500.0, 7000.0, 30.7);
+        fuelRateData.add(2000.0, 500.0, 8000.0, 31.8);
+        fuelRateData.add(2000.0, 500.0, 9000.0, 32.9);
+        fuelRateData.add(2000.0, 500.0, 10000.0, 34.1);
+        fuelRateData.add(2000.0, 500.0, 11000.0, 35.3);
+        fuelRateData.add(2000.0, 500.0, 12000.0, 36.5);
+        fuelRateData.add(2000.0, 500.0, 13000.0, 37.8);
+        fuelRateData.add(2000.0, 500.0, 14000.0, 39.1);
+        fuelRateData.add(2000.0, 500.0, 15000.0, 40.5);
+        fuelRateData.add(2000.0, 500.0, 16000.0, 41.9);
+        fuelRateData.add(8000.0, 500.0, 7000.0, 23.2);
+        fuelRateData.add(8000.0, 500.0, 8000.0, 24);
+        fuelRateData.add(8000.0, 500.0, 9000.0, 24.9);
+        fuelRateData.add(8000.0, 500.0, 10000.0, 25.7);
+        fuelRateData.add(8000.0, 500.0, 11000.0, 26.7);
+        fuelRateData.add(8000.0, 500.0, 12000.0, 27.6);
+        fuelRateData.add(8000.0, 500.0, 13000.0, 28.6);
+        fuelRateData.add(8000.0, 500.0, 14000.0, 29.6);
+        fuelRateData.add(8000.0, 500.0, 15000.0, 30.6);
+        fuelRateData.add(8000.0, 500.0, 16000.0, 31.7);
+        fuelRateData.add(16000.0, 500.0, 7000.0, 17.3);
+        fuelRateData.add(16000.0, 500.0, 8000.0, 17.9);
+        fuelRateData.add(16000.0, 500.0, 9000.0, 18.6);
+        fuelRateData.add(16000.0, 500.0, 10000.0, 19.2);
+        fuelRateData.add(16000.0, 500.0, 11000.0, 19.9);
+        fuelRateData.add(16000.0, 500.0, 12000.0, 20.6);
+        fuelRateData.add(16000.0, 500.0, 13000.0, 21.3);
+        fuelRateData.add(16000.0, 500.0, 14000.0, 22.1);
+        fuelRateData.add(16000.0, 500.0, 15000.0, 22.8);
+        fuelRateData.add(16000.0, 500.0, 16000.0, 23.6);
+        fuelRateData.add(32000.0, 500.0, 7000.0, 9.6);
+        fuelRateData.add(32000.0, 500.0, 8000.0, 9.9);
+        fuelRateData.add(32000.0, 500.0, 9000.0, 10.3);
+        fuelRateData.add(32000.0, 500.0, 10000.0, 10.6);
+        fuelRateData.add(32000.0, 500.0, 11000.0, 11);
+        fuelRateData.add(32000.0, 500.0, 12000.0, 11.4);
+        fuelRateData.add(32000.0, 500.0, 13000.0, 11.8);
+        fuelRateData.add(32000.0, 500.0, 14000.0, 12.2);
+        fuelRateData.add(32000.0, 500.0, 15000.0, 12.6);
+        fuelRateData.add(32000.0, 500.0, 16000.0, 13.1);
+
+        // 600kt table
+        fuelRateData.add(100.0, 600.0, 7000.0, 55.3);
+        fuelRateData.add(100.0, 600.0, 8000.0, 57.2);
+        fuelRateData.add(100.0, 600.0, 9000.0, 59.2);
+        fuelRateData.add(100.0, 600.0, 10000.0, 61.3);
+        fuelRateData.add(100.0, 600.0, 11000.0, 63.5);
+        fuelRateData.add(100.0, 600.0, 12000.0, 65.7);
+        fuelRateData.add(100.0, 600.0, 13000.0, 68);
+        fuelRateData.add(100.0, 600.0, 14000.0, 70.4);
+        fuelRateData.add(100.0, 600.0, 15000.0, 72.9);
+        fuelRateData.add(100.0, 600.0, 16000.0, 75.5);
+        fuelRateData.add(500.0, 600.0, 7000.0, 50.3);
+        fuelRateData.add(500.0, 600.0, 8000.0, 52.1);
+        fuelRateData.add(500.0, 600.0, 9000.0, 53.9);
+        fuelRateData.add(500.0, 600.0, 10000.0, 55.8);
+        fuelRateData.add(500.0, 600.0, 11000.0, 57.8);
+        fuelRateData.add(500.0, 600.0, 12000.0, 59.8);
+        fuelRateData.add(500.0, 600.0, 13000.0, 61.9);
+        fuelRateData.add(500.0, 600.0, 14000.0, 64.1);
+        fuelRateData.add(500.0, 600.0, 15000.0, 66.3);
+        fuelRateData.add(500.0, 600.0, 16000.0, 68.7);
+        fuelRateData.add(2000.0, 600.0, 7000.0, 46.1);
+        fuelRateData.add(2000.0, 600.0, 8000.0, 47.7);
+        fuelRateData.add(2000.0, 600.0, 9000.0, 49.4);
+        fuelRateData.add(2000.0, 600.0, 10000.0, 51.1);
+        fuelRateData.add(2000.0, 600.0, 11000.0, 52.9);
+        fuelRateData.add(2000.0, 600.0, 12000.0, 54.8);
+        fuelRateData.add(2000.0, 600.0, 13000.0, 56.7);
+        fuelRateData.add(2000.0, 600.0, 14000.0, 58.7);
+        fuelRateData.add(2000.0, 600.0, 15000.0, 60.7);
+        fuelRateData.add(2000.0, 600.0, 16000.0, 62.9);
+        fuelRateData.add(8000.0, 600.0, 7000.0, 34.8);
+        fuelRateData.add(8000.0, 600.0, 8000.0, 36);
+        fuelRateData.add(8000.0, 600.0, 9000.0, 37.3);
+        fuelRateData.add(8000.0, 600.0, 10000.0, 38.6);
+        fuelRateData.add(8000.0, 600.0, 11000.0, 40);
+        fuelRateData.add(8000.0, 600.0, 12000.0, 41.4);
+        fuelRateData.add(8000.0, 600.0, 13000.0, 42.8);
+        fuelRateData.add(8000.0, 600.0, 14000.0, 44.4);
+        fuelRateData.add(8000.0, 600.0, 15000.0, 45.9);
+        fuelRateData.add(8000.0, 600.0, 16000.0, 47.5);
+        fuelRateData.add(16000.0, 600.0, 7000.0, 26);
+        fuelRateData.add(16000.0, 600.0, 8000.0, 26.9);
+        fuelRateData.add(16000.0, 600.0, 9000.0, 27.8);
+        fuelRateData.add(16000.0, 600.0, 10000.0, 28.8);
+        fuelRateData.add(16000.0, 600.0, 11000.0, 29.8);
+        fuelRateData.add(16000.0, 600.0, 12000.0, 30.9);
+        fuelRateData.add(16000.0, 600.0, 13000.0, 32);
+        fuelRateData.add(16000.0, 600.0, 14000.0, 33.1);
+        fuelRateData.add(16000.0, 600.0, 15000.0, 34.3);
+        fuelRateData.add(16000.0, 600.0, 16000.0, 35.5);
+        fuelRateData.add(32000.0, 600.0, 7000.0, 14.4);
+        fuelRateData.add(32000.0, 600.0, 8000.0, 14.9);
+        fuelRateData.add(32000.0, 600.0, 9000.0, 15.4);
+        fuelRateData.add(32000.0, 600.0, 10000.0, 15.9);
+        fuelRateData.add(32000.0, 600.0, 11000.0, 16.5);
+        fuelRateData.add(32000.0, 600.0, 12000.0, 17.1);
+        fuelRateData.add(32000.0, 600.0, 13000.0, 17.7);
+        fuelRateData.add(32000.0, 600.0, 14000.0, 18.3);
+        fuelRateData.add(32000.0, 600.0, 15000.0, 19);
+        fuelRateData.add(32000.0, 600.0, 16000.0, 19.6);
+  
+
+}
+
+
+
+
+
+ 
+
+
+
+
+    
+
+    </script>
+
+  </body>
+</html>
+
+

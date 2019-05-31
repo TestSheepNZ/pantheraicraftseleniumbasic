@@ -1,0 +1,20 @@
+#Generic IDE ignore rules across all projects
+
+# intellij stuff
+*.iml
+.idea
+
+# eclipse stuff
+.classpath
+.project
+.checkstyle
+.settings
+.metadata
+.pages.xml.spdia
+.faces-config.xml.jsfdia
+
+
+/target/
+/bin/
+/src/main/resources/screenshots
+
