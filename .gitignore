@@ -13,8 +13,12 @@
 .pages.xml.spdia
 .faces-config.xml.jsfdia
 
+#Log items
+.html
+.gif
+
 
 /target/
 /bin/
-/src/main/resources/screenshots
+# /src/main/resources/screenshots
 
