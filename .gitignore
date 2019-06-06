@@ -23,4 +23,3 @@
 # Ignore log items
 /src/main/resources/screenshots/*.html
 /src/main/resources/screenshots/img/*.gif
-# /src/main/resources/screenshots
