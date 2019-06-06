@@ -13,12 +13,14 @@
 .pages.xml.spdia
 .faces-config.xml.jsfdia
 
-#Log items
-.html
-.gif
 
+#Built areas
 
 /target/
 /bin/
-# /src/main/resources/screenshots
 
+
+# Ignore log items
+/src/main/resources/screenshots/*.html
+/src/main/resources/screenshots/img/*.gif
+# /src/main/resources/screenshots
