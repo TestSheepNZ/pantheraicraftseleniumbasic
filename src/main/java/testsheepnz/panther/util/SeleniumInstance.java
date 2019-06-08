@@ -34,8 +34,14 @@ public class SeleniumInstance {
     }
 
     private void launchDriver() {
-        String chromeDriverPath = testProperties.getDriverPath() + "chromedriver.exe";
-        String firefoxDriverPath = testProperties.getDriverPath() + "geckodriver.exe";
+        String executableExtension="";
+
+        if(testProperties.getMachineType().equals(MachineType.WINDOWS)) {
+            executableExtension = ".exe";
+        }
+
+        String chromeDriverPath = testProperties.getDriverPath() + "chromedriver" + executableExtension;
+        String firefoxDriverPath = testProperties.getDriverPath() + "geckodriver" + executableExtension;
         if(testProperties.getBrowserType().equals(BrowserType.FIREFOX)) {
             System.setProperty("webdriver.gecko.driver", firefoxDriverPath);
             driver = new FirefoxDriver();

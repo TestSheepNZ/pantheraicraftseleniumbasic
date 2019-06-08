@@ -172,6 +172,10 @@ public class TestProperties {
         }
     }
 
+    public MachineType getMachineType() {
+        return machineInUse;
+    }
+
     public Boolean getShutBrowserWhenDone() { return shutBrowserWhenDone; }
 
 }
